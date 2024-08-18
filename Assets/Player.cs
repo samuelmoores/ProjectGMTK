@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
         Cursor.visible = false;
         animator = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
+        
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
     }
 
@@ -38,8 +39,23 @@ public class Player : MonoBehaviour
 
 
         }
+
+        transform.position = new Vector3(transform.position.x, 0.395f, transform.position.z);
+
         controller.Move(movementDirection * Time.deltaTime * 5.0f);
 
 
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Rigidbody rb = hit.collider.attachedRigidbody;
+
+        if(rb != null)
+        {
+            Vector3 force = hit.gameObject.transform.position - transform.position;
+            force.Normalize();
+            rb.AddForceAtPosition(force * 1.0f, transform.position, ForceMode.Impulse);
+        }
     }
 }
